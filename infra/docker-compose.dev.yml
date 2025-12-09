@@ -1,0 +1,48 @@
+version: "3.9"
+
+services:
+  db:
+    image: postgres:16-alpine
+    environment:
+      POSTGRES_USER: app
+      POSTGRES_PASSWORD: app
+      POSTGRES_DB: appdb
+    ports:
+      - "5432:5432"
+    volumes:
+      - db-data:/var/lib/postgresql/data
+
+  backend:
+    build:
+      context: ..
+      dockerfile: infra/docker/backend.Dockerfile
+    env_file:
+      - infra/env/.env.dev
+    ports:
+      - "8000:8000"
+    depends_on:
+      - db
+      - ai-engine
+
+  ai-engine:
+    build:
+      context: ..
+      dockerfile: infra/docker/ai-engine.Dockerfile
+    env_file:
+      - infra/env/.env.dev
+    ports:
+      - "8100:8100"
+
+  frontend:
+    build:
+      context: ..
+      dockerfile: infra/docker/frontend.Dockerfile
+    env_file:
+      - infra/env/.env.dev
+    ports:
+      - "3000:80"
+    depends_on:
+      - backend
+
+volumes:
+  db-data:

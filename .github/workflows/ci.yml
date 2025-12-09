@@ -1,0 +1,40 @@
+name: CI
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  ci:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+
+      - name: Install backend deps
+        working-directory: backend
+        run: |
+          pip install -r requirements.txt
+
+      - name: Backend tests
+        working-directory: backend
+        run: |
+          echo "No backend tests yet"
+
+      - name: Install AI engine deps
+        working-directory: ai-engine
+        run: |
+          pip install -r requirements.txt
+
+      - name: AI engine tests
+        working-directory: ai-engine
+        run: |
+          echo "No AI tests yet"
