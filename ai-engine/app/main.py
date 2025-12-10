@@ -1,6 +1,15 @@
 from fastapi import FastAPI
+from pydantic import BaseModel
 
-app = FastAPI(title="SaaS Starter AI Engine")
+app = FastAPI(title="AI Engine")
+
+
+class ChatRequest(BaseModel):
+    prompt: str
+
+
+class ChatResponse(BaseModel):
+    reply: str
 
 
 @app.get("/health")
@@ -8,14 +17,7 @@ def health():
     return {"status": "ok", "service": "ai-engine"}
 
 
-@app.post("/v1/chat")
-def chat():
-    # Placeholder implementation
-    return {
-        "reply": "This is a stub AI response from the starter template.",
-        "metadata": {
-            "model": "stub",
-            "latency_ms": 0,
-            "tokens": 0,
-        },
-    }
+@app.post("/v1/chat", response_model=ChatResponse)
+def chat(body: ChatRequest):
+    # For now, just echo. Later we can call OpenAI or a local model.
+    return ChatResponse(reply=f"AI echo: {body.prompt}")
